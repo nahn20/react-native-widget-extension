@@ -3,6 +3,7 @@ import { withConfig } from "./withConfig";
 import { withPodfile } from "./withPodfile";
 
 import { withXcode } from "./withXcode";
+import { withPlist } from "./withPlist";
 
 const withLiveActivities: ConfigPlugin<{
   frequentUpdates?: boolean;
@@ -25,16 +26,8 @@ const withLiveActivities: ConfigPlugin<{
   )}Widgets`;
   const bundleIdentifier = `${config.ios?.bundleIdentifier}.${targetName}`;
 
-  config.ios = {
-    ...config.ios,
-    infoPlist: {
-      ...config.ios?.infoPlist,
-      NSSupportsLiveActivities: true,
-      NSSupportsLiveActivitiesFrequentUpdates: frequentUpdates,
-    },
-  };
-
   config = withPlugins(config, [
+    [withPlist, { frequentUpdates }],
     [
       withXcode,
       {
