@@ -39,7 +39,12 @@ export function addPbxGroup(
   const groups = xcodeProject.hash.project.objects["PBXGroup"];
   if (pbxGroupUuid) {
     Object.keys(groups).forEach(function (key) {
-      if (groups[key].name === undefined && groups[key].path === undefined) {
+      const value = groups[key];
+
+      // This is a hacky fix to avoid adding AppClip. There was an issue in EAS for "The file reference for "Info.plist" is a member of multiple groups ("...Clip" and "...Widgets"); this indicates a malformed project.""
+      if(typeof value === "object" || (typeof value === "string" && value.endsWith("Clip"))) return;
+
+      if (value.name === undefined && value.path === undefined) {
         xcodeProject.addToPbxGroup(pbxGroupUuid, key);
       }
     });
